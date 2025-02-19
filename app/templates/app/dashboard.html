@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h2>Welcome, {{ username }}!</h2>
+    <p>You are logged in.</p>
+
+    <button onclick="window.location.href='{% url 'index_page' %}'">Go to Customer Churn Data</button>
+    <button onclick="window.location.href='{% url 'segment' %}'">Go to Customer Segmentation Prediction</button>
+    <br>
+    <br>
+    <a href="{% url 'logout' %}">Logout</a>
+</body>
+</html>
