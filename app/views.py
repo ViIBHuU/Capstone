@@ -12,6 +12,8 @@ with open(model_path, 'rb') as f:
     model = pickle.load(f)
 
 def home(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
     if request.method == 'POST':
         # Get data from form, ensuring keys match the form's name attributes exactly
         tenure = request.POST.get('tenure', '0')
@@ -70,45 +72,11 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect("dashboard")
+            return redirect("/dashboard/")
         else:
             messages.error(request, "Invalid username or password")
     return render(request, "app/login.html")
 
-def home(request):
-    if not request.user.is_authenticated:
-        return redirect("login")
-
-    if request.method == 'POST':
-        try:
-            features = [
-                float(request.POST.get('tenure', 0)),
-                float(request.POST.get('citytier', 0)),
-                float(request.POST.get('warehousetohome', 0)),
-                float(request.POST.get('hourspendonapp', 0)),
-                float(request.POST.get('numberofdeviceregistered', 0)),
-                float(request.POST.get('satisfactionscore', 0)),
-                float(request.POST.get('numberofaddress', 0)),
-                float(request.POST.get('complain', 0)),
-                float(request.POST.get('orderamounthikefromlastyear', 0)),
-                float(request.POST.get('couponused', 0)),
-                float(request.POST.get('ordercount', 0)),
-                float(request.POST.get('daysincelastorder', 0)),
-                float(request.POST.get('cashbackamount', 0)),
-                1 if request.POST.get('gender', 'male').lower() == 'female' else 0,  # gender_female
-                1 if request.POST.get('gender', 'male').lower() == 'male' else 0,    # gender_male
-                1 if request.POST.get('maritalstatus', 'single').lower() == 'divorced' else 0,
-                1 if request.POST.get('maritalstatus', 'single').lower() == 'married' else 0,
-                1 if request.POST.get('maritalstatus', 'single').lower() == 'single' else 0
-            ]
-            features = np.array(features).reshape(1, -1)
-            prediction_prob = model.predict_proba(features)[0][1]
-            prediction_text = 'Churn' if prediction_prob > 0.4 else 'No Churn'
-            return render(request, 'app/result.html', {'prediction': prediction_text, 'predict_probabality': round(prediction_prob, 4)})
-        except ValueError:
-            messages.error(request, 'Invalid input detected. Please check your inputs.')
-
-    return render(request, 'app/index.html')
 
 def register(request):
     if request.method == "POST":

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clustering Results</title>
+    {% load static %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            font-size: 22px;
+            margin-top: 20px;
+        }
+        img {
+            width: 80%;
+            max-width: 600px;
+            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .btn-container {
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 12px 24px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Clustering Results</h1>
+    <h2>K-Means Clustering</h2>
+    <img src="{% static 'kmeans_plot.png' %}" alt="K-Means Clustering">
+    
+    <h2>DBSCAN Clustering</h2>
+    <img src="{% static 'dbscan_plot.png' %}" alt="DBSCAN Clustering">
+
+    <!-- Back to Dashboard Button -->
+    <div class="btn-container">
+        <a href="{% url 'dashboard' %}" class="btn">Back to Dashboard</a>
+    </div>
+
+    <!-- CSRF Token Cleanup Script -->
+    <script>
+        function getCSRFToken() {
+            return document.cookie.split('; ')
+                .find(row => row.startsWith('csrftoken='))
+                ?.split('=')[1];
+        }
+
+        window.addEventListener('beforeunload', function() {
+            fetch("{% url 'cleanup_files' %}", { 
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCSRFToken(),  // Include CSRF token in headers
+                    "Content-Type": "application/json"
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
