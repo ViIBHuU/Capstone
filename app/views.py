@@ -1,4 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 import numpy as np
 import pickle
 import os
@@ -59,3 +62,86 @@ def home(request):
         return render(request, 'app/result.html', {'prediction': prediction_text, 'predict_probabality': round(prediction_prob, 4)})
 
     return render(request, 'app/index.html')
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect("dashboard")
+        else:
+            messages.error(request, "Invalid username or password")
+    return render(request, "app/login.html")
+
+def home(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    if request.method == 'POST':
+        try:
+            features = [
+                float(request.POST.get('tenure', 0)),
+                float(request.POST.get('citytier', 0)),
+                float(request.POST.get('warehousetohome', 0)),
+                float(request.POST.get('hourspendonapp', 0)),
+                float(request.POST.get('numberofdeviceregistered', 0)),
+                float(request.POST.get('satisfactionscore', 0)),
+                float(request.POST.get('numberofaddress', 0)),
+                float(request.POST.get('complain', 0)),
+                float(request.POST.get('orderamounthikefromlastyear', 0)),
+                float(request.POST.get('couponused', 0)),
+                float(request.POST.get('ordercount', 0)),
+                float(request.POST.get('daysincelastorder', 0)),
+                float(request.POST.get('cashbackamount', 0)),
+                1 if request.POST.get('gender', 'male').lower() == 'female' else 0,  # gender_female
+                1 if request.POST.get('gender', 'male').lower() == 'male' else 0,    # gender_male
+                1 if request.POST.get('maritalstatus', 'single').lower() == 'divorced' else 0,
+                1 if request.POST.get('maritalstatus', 'single').lower() == 'married' else 0,
+                1 if request.POST.get('maritalstatus', 'single').lower() == 'single' else 0
+            ]
+            features = np.array(features).reshape(1, -1)
+            prediction_prob = model.predict_proba(features)[0][1]
+            prediction_text = 'Churn' if prediction_prob > 0.4 else 'No Churn'
+            return render(request, 'app/result.html', {'prediction': prediction_text, 'predict_probabality': round(prediction_prob, 4)})
+        except ValueError:
+            messages.error(request, 'Invalid input detected. Please check your inputs.')
+
+    return render(request, 'app/index.html')
+
+def register(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if password == confirm_password:
+            if User.objects.filter(username=username).exists():
+                messages.error(request, "Username already exists")
+            elif User.objects.filter(email=email).exists():
+                messages.error(request, "Email already exists")
+            else:
+                User.objects.create_user(username=username, email=email, password=password)
+                messages.success(request, "Account created successfully! Please log in.")
+                return redirect("login")
+        else:
+            messages.error(request, "Passwords do not match")
+
+    return render(request, "app/signup.html")
+
+def dashboard(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+    return render(request, "app/dashboard.html", {"username": request.user.username})
+
+def segment(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    return render(request, 'app/segment.html')
+
+def user_logout(request):
+    logout(request)
+    return redirect("login")
+
