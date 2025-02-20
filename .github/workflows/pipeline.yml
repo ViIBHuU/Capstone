@@ -29,6 +29,7 @@ jobs:
       run: |
         python manage.py migrate
 
-    - name: Start Django Server
+    - name: Start Django Server (Windows)
       run: |
-        python manage.py runserver
+        Start-Process -NoNewWindow -FilePath "python" -ArgumentList "manage.py runserver 0.0.0.0:8000"
+
