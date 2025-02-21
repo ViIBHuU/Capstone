@@ -16,22 +16,22 @@ def home(request):
         return redirect("login")
     if request.method == 'POST':
         # Get data from form, ensuring keys match the form's name attributes exactly
-        tenure = request.POST.get('tenure', '0')
-        citytier = request.POST.get('citytier', '0')
-        warehousetohome = request.POST.get('warehousetohome', '0')
-        hourspendonapp = request.POST.get('hourspendonapp', '0')
-        numberofdeviceregistered = request.POST.get('numberofdeviceregistered', '0')
-        satisfactionscore = request.POST.get('satisfactionscore', '0')
-        numberofaddress = request.POST.get('numberofaddress', '0')
-        complain = request.POST.get('complain', '0')
-        orderamounthikefromlastyear = request.POST.get('orderamounthikefromlastyear', '0')
-        couponused = request.POST.get('couponused', '0')
-        ordercount = request.POST.get('ordercount', '0')
-        daysincelastorder = request.POST.get('daysincelastorder', '0')
-        cashbackamount = request.POST.get('cashbackamount', '0')
+        tenure = request.POST.get('Tenure', '0')
+        citytier = request.POST.get('Citytier', '0')
+        warehousetohome = request.POST.get('Warehousetohome', '0')
+        hourspendonapp = request.POST.get('Hourspendonapp', '0')
+        numberofdeviceregistered = request.POST.get('Numberofdeviceregistered', '0')
+        satisfactionscore = request.POST.get('Satisfactionscore', '0')
+        numberofaddress = request.POST.get('Numberofaddress', '0')
+        complain = request.POST.get('Complain', '0')
+        orderamounthikefromlastyear = request.POST.get('Orderamounthikefromlastyear', '0')
+        couponused = request.POST.get('Couponused', '0')
+        ordercount = request.POST.get('Ordercount', '0')
+        daysincelastorder = request.POST.get('Daysincelastorder', '0')
+        cashbackamount = request.POST.get('Cashbackamount', '0')
 
         # Handle gender: Automatically allocate 0 or 1
-        gender = request.POST.get('gender', 'Male')  # Default to 'Male' if not provided
+        gender = request.POST.get('Gender', 'Male')  # Default to 'Male' if not provided
         gender_female = 1 if gender.lower() == 'female' else 0
         gender_male = 1 if gender.lower() == 'male' else 0
 
